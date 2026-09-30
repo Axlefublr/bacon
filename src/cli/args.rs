@@ -9,6 +9,10 @@ use {
         Parser,
     },
     clap_complete::ArgValueCandidates,
+    std::io::{
+        self,
+        Write,
+    },
     termimad::ansi,
 };
 
@@ -201,7 +205,10 @@ impl Args {
         }
         Ok(())
     }
-    pub fn print_help(&self) {
+    pub fn write_help(
+        &self,
+        w: &mut impl Write,
+    ) -> io::Result<()> {
         let mut printer = clap_help::Printer::new(Args::command())
             .with("introduction", INTRO)
             .with("options", clap_help::TEMPLATE_OPTIONS_MERGED_VALUE)
@@ -220,6 +227,6 @@ impl Args {
                 .set("example-title", example.title)
                 .set("example-cmd", example.cmd);
         }
-        printer.print_help();
+        printer.write_help(w)
     }
 }

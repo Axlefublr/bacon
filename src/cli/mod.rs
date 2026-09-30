@@ -49,20 +49,22 @@ pub fn run() -> anyhow::Result<()> {
     info!("args: {args:#?}");
     let headless = args.headless;
 
+    let mut out = std::io::stdout();
+
     if args.help {
-        args.print_help();
+        args.write_help(&mut out)?;
         return Ok(());
     }
 
     if args.version {
-        println!("bacon {}", env!("CARGO_PKG_VERSION"));
+        writeln!(out, "bacon {}", env!("CARGO_PKG_VERSION"))?;
         return Ok(());
     }
 
     if args.generate_config_schema {
         let schema = schema_for!(Config);
         let json = serde_json::to_string_pretty(&schema)?;
-        println!("{json}");
+        writeln!(out, "{json}")?;
         return Ok(());
     }
 
@@ -81,7 +83,7 @@ pub fn run() -> anyhow::Result<()> {
             //  $EDITOR "$(bacon --prefs)"
             eprintln!("Preferences file written.");
         }
-        println!("{}", prefs_path.to_string_lossy());
+        writeln!(out, "{}", prefs_path.to_string_lossy())?;
         return Ok(());
     }
 
@@ -96,7 +98,7 @@ pub fn run() -> anyhow::Result<()> {
         } else {
             eprintln!("bacon configuration file already exists.");
         }
-        println!("{}", package_config_path.to_string_lossy());
+        writeln!(out, "{}", package_config_path.to_string_lossy())?;
         return Ok(());
     }
 
@@ -109,15 +111,16 @@ pub fn run() -> anyhow::Result<()> {
     let settings = Settings::read(&args, &context)?;
 
     if args.list_jobs {
-        print_jobs(&settings);
+        write_jobs(&mut out, &settings)?;
         return Ok(());
     }
     if args.completion_list_jobs {
         let mut keys = settings.jobs.keys().cloned().collect::<Vec<_>>();
         keys.sort();
         for job in keys {
-            print!("{job}\0");
+            write!(out, "{job}\0")?;
         }
+        out.flush()?;
         return Ok(());
     }
 

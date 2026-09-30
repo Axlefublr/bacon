@@ -1,3 +1,6 @@
+### next
+- quiet exit instead of a panic when stdout is closed, eg `bacon --help | head -1`
+
 <a name="v3.26.0"></a>
 ### v3.26.0 - 2026/09/26
 - fix a file (eg `build.rs`) not being watched anymore after an editor saved it by replacement - Fix #243

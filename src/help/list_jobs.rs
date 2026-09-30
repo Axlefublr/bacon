@@ -1,5 +1,9 @@
 use {
     crate::*,
+    std::io::{
+        self,
+        Write,
+    },
     termimad::{
         MadSkin,
         minimad::{
@@ -9,7 +13,10 @@ use {
     },
 };
 
-pub fn print_jobs(settings: &Settings) {
+pub fn write_jobs(
+    w: &mut impl Write,
+    settings: &Settings,
+) -> io::Result<()> {
     static MD: &str = r"
     |:-:|:-|
     |**job**|**command**|
@@ -31,5 +38,5 @@ pub fn print_jobs(settings: &Settings) {
     }
     expander.set("default_job", &settings.default_job);
     let skin = MadSkin::default();
-    skin.print_owning_expander(&expander, &TextTemplate::from(MD));
+    skin.write_owning_expander(w, &expander, &TextTemplate::from(MD))
 }
