@@ -98,9 +98,6 @@ impl<'a, 'm> MissionState<'a, 'm> {
         let report_maker = ReportMaker::new(&mission);
         let mut status_skin = MadSkin::default();
         let skin = mission.job.skin;
-        status_skin
-            .paragraph
-            .set_fgbg(skin.status_fg(), skin.status_bg());
         status_skin.italic =
             CompoundStyle::new(Some(skin.status_key_fg()), None, Attribute::Bold.into());
         let (width, height) = if app_state.headless {
